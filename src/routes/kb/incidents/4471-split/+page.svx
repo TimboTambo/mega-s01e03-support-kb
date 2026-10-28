@@ -13,21 +13,29 @@ signature: Timothy Lee
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
-[#4471](/kb/incidents/4471) is marked known: one parser bug, one fix queued. Read the reports
-rather than their subjects or intake tags, and #4471 holds three problems. The queued fix
-closes only one of them.
+[#4471](/kb/incidents/4471) was marked known: one parser bug, one fix queued. Read the reports
+rather than their subjects or intake tags, and #4471 holds three problems. Its fix closed only
+one of them.
 
 <Callout kind="warn">
-Not one issue. Fixing the parser leaves the other two problems open.
+#4471 is closed, but the one-day move is still open. Nothing in #4471's fix touches it.
 </Callout>
+
+## Status
+
+Engineering closed #4471 on 5 October.
+
+- **`parser`**: fixed by "fix(dates): parse dd/mm for eu locales".
+- **`hint`**: won't fix. The booking-v3 form was retired.
+- **`oneDayMove`**: open. Neither outcome moves a date back by one day.
 
 ## What the reports show
 
 <ProblemTable ticket={4471} />
 
 - **`parser`**: a day-first tenant's date comes back with day and month swapped ("8 January"
-  shows as "1 August"). The shared parser reads every date month first. This is the bug the
-  queued fix is for.
+  shows as "1 August"). The shared parser reads every date month first. This is the bug
+  #4471's fix was for.
 - **`hint`**: the same swap, but only through the booking form of booking-v3 tenants. That
   form prints `MM/DD/YYYY` under the date field, so people type month first, and the form
   reads it day first. Fixing the parser doesn't touch it. The fix is the hint.
@@ -35,7 +43,8 @@ Not one issue. Fixing the parser leaves the other two problems open.
   "Lisbon got Tuesday, Toronto got Monday", "only June is one day off"). A parser that reads
   month first can only swap day and month; it can't move a date by one day. This looks like
   a time zone or daylight-saving shift. The desk had already noted these reports
-  (`desk-notes.json`), and #4471's cause table still counted them under `parser`.
+  (`desk-notes.json`), and #4471's cause table counts them under `parser`, where they are
+  filed by tenant. They are counted there too, and again as a problem of their own.
 
 ## How they were counted
 
@@ -50,6 +59,6 @@ Not one issue. Fixing the parser leaves the other two problems open.
 ## Lessons
 
 - Read what a report shows, not what it is called. A big ticket can hide more than one bug.
-- A fix is only "queued" for the problem it fixes.
+- Closing a ticket closes the problems its fix covers, not every report merged into it.
 
 <RenderStamp {signature} />

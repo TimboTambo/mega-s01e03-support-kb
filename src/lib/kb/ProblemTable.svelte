@@ -8,7 +8,7 @@
   let { ticket }: { ticket: number } = $props();
 
   const groups = $derived(groupByProblem(reports as Report[], ticket, tenantOf, notes.oneDayMove));
-  const total = $derived(groups.reduce((n, g) => n + g.reports.length, 0));
+  const total = $derived(new Set(groups.flatMap((g) => g.reports.map((r) => r.id))).size);
 
   const SHOWS: Record<Problem, string> = {
     parser: 'day and month swapped: the shared parser reads day-first dates month first',
@@ -33,7 +33,7 @@
       <tr>
         <td><code>{g.problem}</code></td>
         <td>{g.reports.length}</td>
-        <td>{SHOWS[g.problem]}</td>
+        <td>{SHOWS[g.problem]}{#if g.alsoIn}<span class="also"> · also counted under <code>{g.alsoIn}</code>, where the desk files them</span>{/if}</td>
         <td>{g.tenants}</td>
         <td class="via">{g.channels.join(' · ')}</td>
         <td class="via">{g.firstSeen} → {g.lastSeen}</td>
@@ -44,5 +44,5 @@
 
 <style>
   .sum { font-size: 1.1rem; }
-  .via { color: var(--muted); font-size: 0.85em; }
+  .via, .also { color: var(--muted); font-size: 0.85em; }
 </style>
