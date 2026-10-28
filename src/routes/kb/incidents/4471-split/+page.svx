@@ -1,0 +1,55 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: support desk
+status: open
+reviewed: 2026-10-28
+signature: Timothy Lee
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) is marked known: one parser bug, one fix queued. Read the reports
+rather than their subjects or intake tags, and #4471 holds three problems. The queued fix
+closes only one of them.
+
+<Callout kind="warn">
+Not one issue. Fixing the parser leaves the other two problems open.
+</Callout>
+
+## What the reports show
+
+<ProblemTable ticket={4471} />
+
+- **`parser`**: a day-first tenant's date comes back with day and month swapped ("8 January"
+  shows as "1 August"). The shared parser reads every date month first. This is the bug the
+  queued fix is for.
+- **`hint`**: the same swap, but only through the booking form of booking-v3 tenants. That
+  form prints `MM/DD/YYYY` under the date field, so people type month first, and the form
+  reads it day first. Fixing the parser doesn't touch it. The fix is the hint.
+- **`oneDayMove`**: the date moved by one day ("Tuesday 6 October showed as Monday",
+  "Lisbon got Tuesday, Toronto got Monday", "only June is one day off"). A parser that reads
+  month first can only swap day and month; it can't move a date by one day. This looks like
+  a time zone or daylight-saving shift. The desk had already noted these reports
+  (`desk-notes.json`), and #4471's cause table still counted them under `parser`.
+
+## How they were counted
+
+- The export comes in overlapping pages, so one report can appear twice. Each report id
+  counts once.
+- The cause comes from the tenant (locale and booking form) and the channel, as in
+  `causes.ts`. The intake tag doesn't decide it: it is a guess from the reporter's browser.
+- Subjects don't decide it either. The same subject ("Date is wrong") covers more than one
+  problem, which is why merging on subject ([decision 0001](/kb/decisions/0001-dedupe-by-subject))
+  put them all in one ticket.
+
+## Lessons
+
+- Read what a report shows, not what it is called. A big ticket can hide more than one bug.
+- A fix is only "queued" for the problem it fixes.
+
+<RenderStamp {signature} />
